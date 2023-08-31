@@ -7,6 +7,7 @@ import pytesseract
 from PIL import Image
 import re
 import time
+import subprocess
 
 display_size = (1920, 1080)
 dx, dy = display_size
@@ -19,6 +20,9 @@ button_x_delta = 100
 submit = (962, 1030)
 submit_s = (962 + dx, 1030)
 
+def ydotool_run(args):
+    print(" ".join(["ydotool"] + args))
+    return subprocess.run(["ydotool"] + args, stdout=subprocess.PIPE).stdout.decode('utf-8')
 mouse = Controller()
 while True:
 
@@ -43,13 +47,15 @@ while True:
             b_shifted = (bx + button_x_delta * i, by)
 
             if binary[i] == '1':
-                mouse.position = b_shifted
-                mouse.click(Button.left, 1)
-                time.sleep(0.1)
+                ydotool_run(["mousemove", "-a", "--", str(b_shifted[0]), str(b_shifted[1])])
+                ydotool_run(["click", "0x40", "0x80"])
+                time.sleep(1)
 
-        mouse.position = submit_s
-        mouse.click(Button.left, 1)
+        ydotool_run(["mousemove", "-a", "--", str(submit_s[0]), str(submit_s[1])])
+        ydotool_run(["click", "0x40", "0x80"])
+        # mouse.click(Button.left, 1)
         break
 
     else:
         print("No match")
+
