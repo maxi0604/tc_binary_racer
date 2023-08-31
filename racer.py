@@ -11,7 +11,7 @@ import subprocess
 
 display_size = (1920, 1080)
 dx, dy = display_size
-bbox = (800, 380, 1180, 580)
+bbox = (930, 500, 960, 550)
 x1, y1, x2, y2 = bbox
 bbox_ss = (x1 + dx, y1, x2 + dx, y2)
 first_bit = (529, 949)
@@ -44,10 +44,10 @@ while True:
 
     cv2.imshow("proc", processed)
     cv2.waitKey(1)
-    text = pytesseract.image_to_string(processed)
+    text = pytesseract.image_to_string(processed, config='-c tessedit_char_whitelist=0123456789 --psm 10')
     print(text)
     
-    n_match = re.search("is ([0-9O|/\\]]+) in", text)
+    n_match = re.search("([0-9O|/\\]]+)", text)
 
     if n_match:
         n_match = n_match.group(1).replace("O", "0").replace("|", "1").replace("/", "7").replace("]", "1")
