@@ -27,24 +27,30 @@ def ydotool_run(args):
     print(" ".join(["ydotool"] + args))
     return subprocess.run(["ydotool"] + args, stdout=subprocess.PIPE).stdout.decode('utf-8')
 mouse = Controller()
-first_match = True
+
 while True:
 
     # sct_img = ImageGrab.grab(bbox=bbox)
 
     img = ImageGrab.grab(bbox=bbox_ss)
-    processed = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
-    text = pytesseract.image_to_string(img)
+    processed = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
+    hsv = cv2.cvtColor(processed, cv2.COLOR_RGB2HSV)
+
+    orange_low = np.array([0, 0, 204])
+    white = np.array([255, 255, 255])
+    mask = cv2.inRange(hsv, orange_low, white)
+    processed[mask == 0] = (0, 0, 0)
+    processed[mask > 0] = (255, 255, 255)
+
+    cv2.imshow("proc", processed)
+    cv2.waitKey(1)
+    text = pytesseract.image_to_string(processed)
     print(text)
     
     n_match = re.search("is ([0-9O|/\\]]+) in", text)
 
     if n_match:
         n_match = n_match.group(1).replace("O", "0").replace("|", "1").replace("/", "7").replace("]", "1")
-        if first_match:
-            first_match = False
-            time.sleep(1)
-            continue
         num = int(n_match)
         binary = bin(num)[2:].zfill(8)
         print(binary)
@@ -57,24 +63,10 @@ while True:
 
 
             if binary[i] == '1':
-                ydotool_run(["click", "0x40", "0x80"])
-            
-            if i != 7:
-                ydotool_run(["mousemove", "--", str(button_x_delta), "0"])
-                time.sleep(0.25)
+                ydotool_run(["type", str(i + 1)])
 
-        for i in range(3):
-            time.sleep(0.25)
-            ydotool_run(["mousemove", "--", str(-button_x_delta - backwards_correction), "0"])
+        ydotool_run(["type", " "])
 
-        ydotool_run(["mousemove", "--", "0", str(down)])
-        ydotool_run(["click", "0x40", "0x80"])
-        ydotool_run(["mousemove", "--", "0", str(-down - upwards_correction)])
-        time.sleep(0.25)
-
-        for i in range(4):
-            time.sleep(0.25)
-            ydotool_run(["mousemove", "--", str(-button_x_delta - backwards_correction), "0"])
         # ydotool_run(["mousemove", "--", str(submit_s[0]), str(submit_s[1])])
         # ydotool_run(["click", "0x40", "0x80"])
         # mouse.click(Button.left, 1)
