@@ -11,7 +11,8 @@ import subprocess
 
 display_size = (1920, 1080)
 dx, dy = display_size
-bbox = (930, 500, 960, 550)
+#bbox = (930, 500, 960, 550)
+bbox = (800, 380, 1180, 580)
 x1, y1, x2, y2 = bbox
 bbox_ss = (x1 + dx, y1, x2 + dx, y2)
 first_bit = (529, 949)
@@ -36,17 +37,17 @@ while True:
     processed = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
     hsv = cv2.cvtColor(processed, cv2.COLOR_RGB2HSV)
 
-    orange_low = np.array([0, 0, 204])
-    white = np.array([255, 255, 255])
+    orange_low = np.array([80, 170, 210])
+    white = np.array([90, 200, 240])
     mask = cv2.inRange(hsv, orange_low, white)
     processed[mask == 0] = (0, 0, 0)
     processed[mask > 0] = (255, 255, 255)
 
     cv2.imshow("proc", processed)
     cv2.waitKey(1)
-    text = pytesseract.image_to_string(processed, config='-c tessedit_char_whitelist=0123456789 --psm 10')
+    text = pytesseract.image_to_string(processed, config='-c tessedit_char_whitelist=0123456789')
     print(text)
-    
+
     n_match = re.search("([0-9O|/\\]]+)", text)
 
     if n_match:
