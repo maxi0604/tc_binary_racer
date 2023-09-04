@@ -11,8 +11,8 @@ import subprocess
 
 display_size = (1920, 1080)
 dx, dy = display_size
-bbox = (930, 500, 960, 550)
-# bbox = (800, 380, 1180, 580)
+# bbox = (930, 500, 960, 550)
+bbox = (800, 380, 1180, 580)
 x1, y1, x2, y2 = bbox
 bbox_ss = (x1 + dx, y1, x2 + dx, y2)
 first_bit = (529, 949)
