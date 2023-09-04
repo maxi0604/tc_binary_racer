@@ -37,8 +37,8 @@ while True:
     processed = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
     hsv = cv2.cvtColor(processed, cv2.COLOR_RGB2HSV)
 
-    orange_low = np.array([80, 170, 210])
-    white = np.array([90, 200, 240])
+    orange_low = np.array([80, 170, 200])
+    white = np.array([120, 220, 240])
     mask = cv2.inRange(hsv, orange_low, white)
     processed[mask == 0] = (0, 0, 0)
     processed[mask > 0] = (255, 255, 255)
